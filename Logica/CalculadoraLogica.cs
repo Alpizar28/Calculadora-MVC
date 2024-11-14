@@ -1,9 +1,18 @@
 ﻿using Calculadora_MVC.Controllers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Calculadora_MVC.Logica
 {
     public class CalculadoraLogica
     {
+        private readonly List<double> _memoria;
+
+        public CalculadoraLogica()
+        {
+            _memoria = new List<double>();
+        }
+
         public double Calcular(double primerNumero, double segundoNumero, string operador)
         {
             double resultado = 0;
@@ -70,16 +79,31 @@ namespace Calculadora_MVC.Logica
             return suma / numeros.Length;
         }
 
-        // Método para guardar un número en memoria
         public void GuardarEnMemoria(double numero)
         {
+            if (_memoria.Count >= 10)
+            {
+                _memoria.RemoveAt(0); 
+            }
+            _memoria.Add(numero);
         }
 
-        // Método para recuperar un número de memoria
+        public double CalcularPromedioMemoria()
+        {
+            if (_memoria.Count == 0)
+            {
+                return 0; 
+            }
+            return _memoria.Average();
+        }
+
         public double RecuperarDeMemoria()
         {
-            return 0;
+            return _memoria.Count > 0 ? _memoria.Last() : 0;
+        }
+        public List<double> ObtenerMemoria()
+        {
+            return new List<double>(_memoria); 
         }
     }
 }
-

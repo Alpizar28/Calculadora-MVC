@@ -39,16 +39,18 @@ namespace Calculadora_MVC
         private void Btn9_Click(object sender, EventArgs e) => _controller.AgregarNumero("9");
         private void BtnDot_Click(object sender, EventArgs e) => _controller.AgregarNumero(".");
 
+        private void BtnMemory_Click(object sender, EventArgs e) => _controller.GuardarEnMemoria(); // M+
+        private void BtnAvg_Click(object sender, EventArgs e) => _controller.CalcularPromedio();     // Avg
+
         private void BtnData_Click(object sender, EventArgs e) => _controller.CalcularPromedio();
         private void BtnPrimo_Click(object sender, EventArgs e) => _controller.CalcularPrimo();
         private void BtnBinario_Click(object sender, EventArgs e) => _controller.ConvertirABinario();
-        private void BtnMemory_Click(object sender, EventArgs e) => _controller.RecuperarDeMemoria();
-        private void BtnAvg_Click(object sender, EventArgs e) => _controller.GuardarEnMemoria();
 
         private void btnVerBitacora_Click_1(object sender, EventArgs e)
         {
             _controller.MostrarBitacora();
         }
+
         public void MostrarBitacora(string contenido)
         {
             MessageBox.Show(contenido, "Bitácora de Operaciones");
@@ -56,13 +58,12 @@ namespace Calculadora_MVC
 
         public void ActualizarResultado(string resultado)
         {
-            this.txtResultado.Text = resultado;
+            txtResultado.Text = resultado;
         }
 
         private void GUI_Load(object sender, EventArgs e)
         {
-            // Puedes añadir aquí cualquier inicialización adicional necesaria al cargar el formulario
-        }
 
+        }
     }
 }

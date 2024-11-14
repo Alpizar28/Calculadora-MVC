@@ -1,5 +1,7 @@
 ﻿using Calculadora_MVC.Data;
 using Calculadora_MVC.Logica;
+using System;
+using System.Collections.Generic;
 
 namespace Calculadora_MVC.Controllers
 {
@@ -10,6 +12,8 @@ namespace Calculadora_MVC.Controllers
         private readonly BitacoraManager _bitacora;
         private string _operador;
         private double _primerNumero;
+        private bool _memorizado; 
+        private readonly List<string> _bitacoraOperaciones; 
 
         public CalculadoraController(GUI gui)
         {
@@ -18,6 +22,9 @@ namespace Calculadora_MVC.Controllers
             _bitacora = new BitacoraManager();
             _operador = string.Empty;
             _primerNumero = 0;
+            _memorizado = false;
+            _bitacoraOperaciones = new List<string>(); 
+
         }
 
         public void CalcularResultado()
@@ -27,7 +34,6 @@ namespace Calculadora_MVC.Controllers
                 double resultado = _logica.Calcular(_primerNumero, segundoNumero, _operador);
                 string operacion = $"{_primerNumero} {_operador} {segundoNumero} = {resultado}";
 
-                // Guardar la operación en la bitácora
                 _bitacora.GuardarOperacion(operacion);
 
                 _gui.ActualizarResultado(resultado.ToString());
@@ -40,13 +46,20 @@ namespace Calculadora_MVC.Controllers
 
         public void MostrarBitacora()
         {
-            string contenido = _bitacora.LeerBitacora();
+            string contenido = string.Join(Environment.NewLine, _bitacoraOperaciones);
             _gui.MostrarBitacora(contenido);
         }
-    
+
+
         public void AgregarNumero(string numero)
         {
-            if (_gui.Resultado == "0")
+            if (_memorizado)
+            {
+                _gui.Resultado = ""; 
+                _memorizado = false; 
+            }
+
+            if (_gui.Resultado == "0" || _gui.Resultado == "Memorizado")
             {
                 _gui.Resultado = numero;
             }
@@ -55,6 +68,7 @@ namespace Calculadora_MVC.Controllers
                 _gui.Resultado += numero;
             }
         }
+
 
         public void RealizarOperacion(string operador)
         {
@@ -68,7 +82,6 @@ namespace Calculadora_MVC.Controllers
                 _gui.ActualizarResultado("Error");
             }
         }
-
 
         public void Limpiar()
         {
@@ -109,7 +122,6 @@ namespace Calculadora_MVC.Controllers
             }
         }
 
-
         public void GuardarEnMemoria()
         {
             if (double.TryParse(_gui.Resultado, out double numero))
@@ -117,8 +129,14 @@ namespace Calculadora_MVC.Controllers
                 _logica.GuardarEnMemoria(numero);
                 _gui.ActualizarResultado("Memorizado");
 
-                // Registrar en la bitácora
-                _bitacora.GuardarOperacion($"Guardado en memoria: {numero}");
+                string operacion = $"Guardado en memoria: {numero}";
+                _bitacora.GuardarOperacion(operacion);
+
+                if (_bitacoraOperaciones.Count >= 10)
+                {
+                    _bitacoraOperaciones.RemoveAt(0); 
+                }
+                _bitacoraOperaciones.Add(operacion); 
             }
             else
             {
@@ -126,22 +144,30 @@ namespace Calculadora_MVC.Controllers
             }
         }
 
+        
+
+
         public void RecuperarDeMemoria()
         {
             double numero = _logica.RecuperarDeMemoria();
             _gui.ActualizarResultado(numero.ToString());
 
-            // Registrar en la bitácora
             _bitacora.GuardarOperacion($"Recuperado de memoria: {numero}");
         }
 
-
         public void CalcularPromedio()
         {
-            // Ejemplo: Calcula el promedio de valores en una lista o array
-            double[] numeros = { 10, 20, 30 }; // Ejemplo fijo
-            double promedio = _logica.CalcularPromedio(numeros);
+            double promedio = _logica.CalcularPromedioMemoria();
             _gui.ActualizarResultado(promedio.ToString());
+
+            _bitacora.GuardarOperacion($"Promedio calculado: {promedio}");
         }
+        public void PruebaBitacora()
+        {
+            _bitacora.GuardarOperacion("Prueba de escritura en la bitácora: 123");
+            string contenido = _bitacora.LeerBitacora();
+            Console.WriteLine(contenido); 
+        }
+
     }
 }
