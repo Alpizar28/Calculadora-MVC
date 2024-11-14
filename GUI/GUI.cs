@@ -51,6 +51,7 @@ namespace Calculadora_MVC
             _controller.MostrarBitacora();
         }
 
+
         public void MostrarBitacora(string contenido)
         {
             MessageBox.Show(contenido, "Bitácora de Operaciones");

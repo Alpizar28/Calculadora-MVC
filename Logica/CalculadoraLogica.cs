@@ -105,5 +105,10 @@ namespace Calculadora_MVC.Logica
         {
             return new List<double>(_memoria); 
         }
+        public void LimpiarMemoria()
+        {
+            _memoria.Clear(); // Limpia todos los elementos en la lista de memoria
+        }
+
     }
 }

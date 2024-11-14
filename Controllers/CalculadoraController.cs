@@ -46,9 +46,13 @@ namespace Calculadora_MVC.Controllers
 
         public void MostrarBitacora()
         {
-            string contenido = string.Join(Environment.NewLine, _bitacoraOperaciones);
+            string contenido = _bitacoraOperaciones.Count > 0
+                ? string.Join(Environment.NewLine, _bitacoraOperaciones)
+                : "No hay operaciones registradas.";
+
             _gui.MostrarBitacora(contenido);
         }
+
 
 
         public void AgregarNumero(string numero)
@@ -85,10 +89,12 @@ namespace Calculadora_MVC.Controllers
 
         public void Limpiar()
         {
-            _bitacora.LimpiarBitacora();
-            _gui.ActualizarResultado("0");
-            _primerNumero = 0;
-            _operador = string.Empty;
+            _gui.ActualizarResultado("0"); // Restablece la pantalla a 0
+            _primerNumero = 0; // Limpia el primer número almacenado
+            _operador = string.Empty; // Limpia el operador
+            _logica.LimpiarMemoria(); // Llama al método que limpia la memoria
+            _bitacora.LimpiarBitacora(); // Llama al método que borra el archivo de bitácora
+            _bitacoraOperaciones.Clear();
         }
 
         public void CalcularPrimo()
